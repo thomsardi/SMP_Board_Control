@@ -1,0 +1,20 @@
+#ifndef WEB_SERVER_HANDLER_H
+#define WEB_SERVER_HANDLER_H
+
+#include <Arduino.h>
+#include <ArduinoJson.h>
+#include <ESPAsyncWebServer.h>
+#include <DataType.h>
+#include <Vector.h>
+
+class WebServerHandler {
+    public:
+        WebServerHandler();
+        int processLineDataRequest(AsyncWebServerRequest *request, String &buffer, const LineData lineData[], size_t arrSize);
+        int processRelayRequest(const String &input, String &buffer, Vector<Command> &commandList);
+        ~WebServerHandler();
+    private:
+        bool isNumber(const String &input);
+};
+
+#endif
