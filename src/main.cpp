@@ -11,6 +11,8 @@
 #include <WebServerHandler.h>
 #include <DataType.h>
 #include <Vector.h>
+#include <RelayControl.h>
+#include <LedControl.h>
 
 const int numberOfShiftRegister = 2;
 const int numberOfLed = 6;
@@ -41,6 +43,10 @@ WebServerHandler webServerHandler;
 LineData lineData[64];
 Command command[16];
 Vector<Command> commandList;
+
+RelayControl relayControl;
+LedControl ledControl;
+
 
 void relayTest1()
 {
@@ -197,6 +203,7 @@ void loop() {
   // put your main code here, to run repeatedly:
 
   if ((WiFi.status() != WL_CONNECTED) && (millis() - lastReconnectMillis >= reconnectInterval)) {
+    Serial.println("WiFi Disconnected");    
     digitalWrite(internalLed, LOW);
     Serial.println("Reconnecting to WiFi...");
     WiFi.disconnect();
@@ -212,15 +219,11 @@ void loop() {
     {
       case RELAY:
         Serial.println("Command Type : RELAY");
-        int pin;
-        int multiplier = (c.line - 1) / 3;
-        if (c.line > 0)
-        {
-          pin = 7 + (7*multiplier) - (c.line % 3 - 1);
-          // sr.set(pin, c.value);
-          Serial.println("Pin :" + String(pin));
-        }
-        
+        sr.set(relayControl.write(c.line, c.value), HIGH);
+        delay(20);
+        sr.set(relayControl.write(c.line, c.value), LOW);
+        ledControl.write(c.line, c.value, leds);
+        FastLED.show();
       break;
     }
     // Serial.println("Line : " + String(c.line));
