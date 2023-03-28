@@ -16,15 +16,17 @@ int RelayControl::write(int line, bool state)
 
 int RelayControl::relaySet(int line)
 {
-    int multiplier = (line - 1) / 3;
-    int pin = 7 + 7*(multiplier) - ((line-1)*2 % 6);
+    int lineToPin = line - 1;
+    int multiplier = lineToPin / 3;
+    int totalPin = (8 + 8*(multiplier)) - 1;
+    int substract = (lineToPin - (multiplier*3)) * 2;
+    int pin = totalPin - substract;
     return pin;
 }
 
 int RelayControl::relayReset(int line)
 {
-    int multiplier = (line - 1) / 3;
-    int pin = 7 + 7*(multiplier) - ((line-1)*2 % 6);
+    int pin = relaySet(line);
     return pin - 1;
 }
 

@@ -14,8 +14,8 @@
 #include <RelayControl.h>
 #include <LedControl.h>
 
-const int numberOfShiftRegister = 2;
-const int numberOfLed = 6;
+const int numberOfShiftRegister = 4;
+const int numberOfLed = 12;
 const int din = 18; //data pin
 const int stcp = 19; //latch pin
 const int shcp = 21; //clock pin
@@ -35,7 +35,7 @@ AsyncWebServer server(80);
 
 // create a global shift register object
 // parameters: <number of shift registers> (data pin, clock pin, latch pin)
-ShiftRegister74HC595<1> sr(din, shcp, stcp);
+ShiftRegister74HC595<numberOfShiftRegister> sr(din, shcp, stcp);
 
 CRGB leds[numberOfLed];
 
@@ -47,27 +47,32 @@ Vector<Command> commandList;
 RelayControl relayControl;
 LedControl ledControl;
 
-
 void relayTest1()
 {
   for (int j = 0; j < numberOfShiftRegister; j++)
   {
-    for (int i = 7; i > 1; i--)
+    for (int i = 7; i > 0; i--)
     {
       int pin = i + (j*7);
       Serial.println("Pin : " + String(pin));
-      sr.setNoUpdate(pin, HIGH);
+      sr.set(pin, HIGH);
+      delay(20);
+      sr.set(pin, LOW);
+      delay(20);
       int ledString = (3 - (i/2)) + 3*j;
       Serial.print("Led String " + String(ledString));
       if (i%2)
       {
-          Serial.println("set to Green");
+          leds[ledString] = CRGB::Green;
+          Serial.println(" set to Green");
       }
       else
       {
-          Serial.println("set to Black");
+          leds[ledString] = CRGB::Black;
+          Serial.println(" set to Black");
       }
-      delay(100); 
+      FastLED.show();
+      delay(1000); 
     }
   }
 }
@@ -218,10 +223,13 @@ void loop() {
     switch (c.commandType)
     {
       case RELAY:
+        int pin = relayControl.write(c.line, c.value);
         Serial.println("Command Type : RELAY");
-        sr.set(relayControl.write(c.line, c.value), HIGH);
+        Serial.println("Pin : " + String(pin));
+        sr.set(pin, HIGH);
         delay(20);
-        sr.set(relayControl.write(c.line, c.value), LOW);
+        sr.set(pin, LOW);
+        delay(20);
         ledControl.write(c.line, c.value, leds);
         FastLED.show();
       break;
@@ -231,6 +239,57 @@ void loop() {
     commandList.remove(0);
     // digitalWrite(internalLed, c.value);
   }
+
+  // relayTest1();
+  // sr.set(7, HIGH);
+  // delay(20);
+  // sr.set(7, LOW);
+  // delay(2000);
+
+  // sr.set(6, HIGH);
+  // delay(20);
+  // sr.set(6, LOW);
+  // delay(2000);
+
+  // sr.set(11, HIGH);
+  // delay(20);
+  // sr.set(11, LOW);
+  // delay(2000);
+
+  // sr.set(10, HIGH);
+  // delay(20);
+  // sr.set(10, LOW);
+  // delay(2000);
+
+  // sr.set(23, HIGH);
+  // delay(20);
+  // sr.set(23, LOW);
+  // delay(2000);
+
+  // sr.set(22, HIGH);
+  // delay(20);
+  // sr.set(22, LOW);
+  // delay(2000);
+
+  // sr.set(27, HIGH);
+  // delay(20);
+  // sr.set(27, LOW);
+  // delay(2000);
+
+  // sr.set(26, HIGH);
+  // delay(20);
+  // sr.set(26, LOW);
+  // delay(2000);
+
+  // sr.set(28, 1);
+  // delay(20);
+  // sr.set(28, 0);
+  // delay(1000);
+
+  // sr.set(27, 1);
+  // delay(20);
+  // sr.set(27, 0);
+  // delay(1000);
 
   /**
    * Test 1
