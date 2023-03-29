@@ -1,0 +1,40 @@
+{
+    "data" : [
+        {
+            "line" : 1,
+            "voltage" : 220000,
+            "current" : 16000,
+            "power" : 3520
+        },
+        {
+            "line" : 2,
+            "voltage" : 220000,
+            "current" : 10000,
+            "power" : 2200
+        },
+        {
+            "line" : 3,
+            "voltage" : 220000,
+            "current" : 10000,
+            "power" : 2200
+        },
+        {
+            "line" : 4,
+            "voltage" : 220000,
+            "current" : 10000,
+            "power" : 2200
+        },
+        {
+            "line" : 5,
+            "voltage" : 220000,
+            "current" : 10000,
+            "power" : 2200
+        },
+        {
+            "line" : 6,
+            "voltage" : 220000,
+            "current" : 10000,
+            "power" : 2200
+        }
+    ]
+}

@@ -17,6 +17,38 @@ void tearDown(void)
   // clean stuff up here
 }
 
+void parser(std::string input, char delimiter, std::string value[], size_t arrSize)
+{
+    int index = 0;
+    int lastIndex = 0;
+    std::string stringVal = input;
+    std::string temp = "";
+    int i = 0;
+    bool isContinue = true;
+    while(isContinue)
+    {
+        printf("parsing\n");
+        lastIndex = stringVal.find(delimiter, index);
+        printf("Found!\n");
+        printf("Start index : %i\n", index);
+        printf("Last index : %i\n", lastIndex);
+        printf("%s\n", stringVal.substr(index, lastIndex - index).c_str());
+        i++;
+        if (lastIndex <= 0)
+        {
+            isContinue = false;
+        }
+        index = lastIndex+1;
+    }
+}
+
+void parserTest()
+{
+    std::string value[12];
+    int arrSize = 12;
+    parser("1,23444,3123,41", ',', value, arrSize);
+}
+
 void pinConvert(int line)
 {
     int lineToPin = line - 1;
@@ -82,7 +114,8 @@ int main(int argc, char **argv) {
     UNITY_BEGIN();
     // RUN_TEST(relay_test_1);
     
-    RUN_TEST(convertTest);
+    // RUN_TEST(convertTest);
+    RUN_TEST(parserTest);
     
     UNITY_END();
     // cout << "test" << endl;

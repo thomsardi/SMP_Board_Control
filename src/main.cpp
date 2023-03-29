@@ -49,54 +49,97 @@ LedControl ledControl;
 
 void relayTest1()
 {
-  for (int j = 0; j < numberOfShiftRegister; j++)
+  for (size_t i = 1; i <= 12; i++)
   {
-    for (int i = 7; i > 0; i--)
-    {
-      int pin = i + (j*7);
-      Serial.println("Pin : " + String(pin));
-      sr.set(pin, HIGH);
-      delay(20);
-      sr.set(pin, LOW);
-      delay(20);
-      int ledString = (3 - (i/2)) + 3*j;
-      Serial.print("Led String " + String(ledString));
-      if (i%2)
-      {
-          leds[ledString] = CRGB::Green;
-          Serial.println(" set to Green");
-      }
-      else
-      {
-          leds[ledString] = CRGB::Black;
-          Serial.println(" set to Black");
-      }
-      FastLED.show();
-      delay(1000); 
-    }
+    int pin = relayControl.write(i, HIGH);
+    sr.set(pin, HIGH);
+    delay(20);
+    sr.set(pin, LOW);
+    delay(20);
+    ledControl.write(i, HIGH, leds);
+    FastLED.show();
+    delay(200);
+    pin = relayControl.write(i, LOW);
+    sr.set(pin, HIGH);
+    delay(20);
+    sr.set(pin, LOW);
+    delay(20);
+    ledControl.write(i, LOW, leds);
+    FastLED.show();
+    delay(200);
   }
+  
 }
 
 void relayTest2()
 {
-  uint8_t pinValues[] = { B10101000, B10101000 };
-  sr.setAll(pinValues);
-  for (size_t i = 0; i < numberOfLed; i++)
+  int pin;
+  for (size_t i = 1; i <= 12; i++)
   {
-    leds[i] = CRGB::Black;
+    if (i%2)
+    {
+      pin = relayControl.write(i, HIGH);
+      sr.set(pin, HIGH);
+      delay(20);
+      sr.set(pin, LOW);
+      delay(20);
+      ledControl.write(i, HIGH, leds);
+      FastLED.show();
+    }
+    else
+    {
+      pin = relayControl.write(i, LOW);
+      sr.set(pin, HIGH);
+      delay(20);
+      sr.set(pin, LOW);
+      delay(20);
+      ledControl.write(i, LOW, leds);
+      FastLED.show();
+    }
   }
-  FastLED.show();
 }
 
 void relayTest3()
 {
-  uint8_t pinValues[] = { B01010100, B01010100 };
-  sr.setAll(pinValues);
-  for (size_t i = 0; i < numberOfLed; i++)
+  int pin;
+  for (size_t i = 1; i <= 12; i++)
   {
-    leds[i] = CRGB::Black;
+    if (i%2)
+    {
+      pin = relayControl.write(i, LOW);
+      sr.set(pin, HIGH);
+      delay(20);
+      sr.set(pin, LOW);
+      delay(20);
+      ledControl.write(i, LOW, leds);
+      FastLED.show();
+    }
+    else
+    {
+      pin = relayControl.write(i, HIGH);
+      sr.set(pin, HIGH);
+      delay(20);
+      sr.set(pin, LOW);
+      delay(20);
+      ledControl.write(i, HIGH, leds);
+      FastLED.show();
+    }
   }
-  FastLED.show();
+}
+
+void resetAll()
+{
+  int pin;
+  for (size_t i = 1; i <= 12; i++)
+  {
+    pin = relayControl.write(i, LOW);
+    sr.set(pin, HIGH);
+    delay(20);
+    sr.set(pin, LOW);
+    delay(20);
+    ledControl.write(i, LOW, leds);
+    FastLED.show();
+  }
 }
 
 void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info){
@@ -220,17 +263,28 @@ void loop() {
   {
     Command c = commandList.front();
     Serial.println("==================");
-    switch (c.commandType)
+    switch (c.type)
     {
       case RELAY:
-        int pin = relayControl.write(c.line, c.value);
-        Serial.println("Command Type : RELAY");
-        Serial.println("Pin : " + String(pin));
-        sr.set(pin, HIGH);
+        // Serial.println("Command Type : RELAY");
+        for(int i = 0; i < c.relayData.number; i++)
+        {
+          int pin = relayControl.write(c.relayData.lineList[i], c.relayData.valueList[i]);
+          Serial.println("Pin : " + String(pin));
+          sr.setNoUpdate(pin, HIGH);
+          ledControl.write(c.relayData.lineList[i], c.relayData.valueList[i], leds);
+        }
+        sr.updateRegisters();
+        // Serial.println("Set To High");
         delay(20);
-        sr.set(pin, LOW);
+        for(int i = 0; i < c.relayData.number; i++)
+        {
+          int pin = relayControl.write(c.relayData.lineList[i], c.relayData.valueList[i]);
+          sr.setNoUpdate(pin, LOW);
+        }
+        sr.updateRegisters();
         delay(20);
-        ledControl.write(c.line, c.value, leds);
+        // Serial.println("Set To Low");
         FastLED.show();
       break;
     }
@@ -241,6 +295,13 @@ void loop() {
   }
 
   // relayTest1();
+  // delay(1000);
+  // relayTest2();
+  // delay(1000);
+  // relayTest3();
+  // delay(1000);
+  // resetAll();
+  // delay(1000);
   // sr.set(7, HIGH);
   // delay(20);
   // sr.set(7, LOW);

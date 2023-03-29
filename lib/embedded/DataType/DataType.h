@@ -2,7 +2,7 @@
 #define DATA_TYPE_H
 
 enum CommandType{
-    RELAY = 1
+    RELAY = 1,
 };
 
 struct LineData
@@ -12,11 +12,17 @@ struct LineData
     int power;
 };
 
-struct Command
+struct RelayData
 {
-    int commandType;
-    int line;
-    int value;
+    int number;
+    int lineList[30];
+    int valueList[30];
+};
+
+struct Command 
+{
+    int type;
+    RelayData relayData;
 };
 
 #endif
