@@ -17,7 +17,7 @@ void LedControl::write(int line, bool state, CRGB leds[])
         leds[line-1] = CRGB::Green;
         return;
     }
-    leds[line-1] = CRGB::Black;
+    leds[line-1] = CRGB::Red;
     return;
 }
 

@@ -15,8 +15,8 @@ struct LineData
 struct RelayData
 {
     int number;
-    int lineList[30];
-    int valueList[30];
+    int lineList[36];
+    int valueList[36];
 };
 
 struct Command 

@@ -12,7 +12,7 @@ WebServerHandler::~WebServerHandler()
 
 int WebServerHandler::processLineDataRequest(AsyncWebServerRequest *request, String &buffer, const LineData lineData[], size_t arrSize)
 {
-    StaticJsonDocument<512> doc;
+    StaticJsonDocument<1024> doc;
     int line = 0;
     int voltage = 0;
     
@@ -66,47 +66,30 @@ int WebServerHandler::processRelayRequest(const String &input, String &buffer, V
         return -1;
     }
 
-    if(!doc.containsKey("number"))
-    {
-        return -1;
-    }
-
-    if(!doc.containsKey("line"))
-    {
-        return -1;
-    }
-
-    if(!doc.containsKey("value"))
+    if(!doc.containsKey("data"))
     {
         return -1;
     }
 
     Command command;
-    JsonArray line = doc["line"];
-    JsonArray value = doc["value"];
-    int number = doc["number"]; // 30
+
+    command.type = RELAY;
+
+    int number = 0;
+    for (JsonObject data_item : doc["data"].as<JsonArray>()) 
+    {
+        command.relayData.lineList[number] = data_item["line"]; // 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+        command.relayData.valueList[number] = data_item["value"]; // 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+        number++;
+    }
 
     if (number <= 0)
     {
         return -1;
     }
 
-    command.type = RELAY;
     command.relayData.number = number;
-
-    int i = 0;
-    for(JsonVariant v : line) 
-    {
-        command.relayData.lineList[i] = v.as<int>();
-        i++;
-    }
-    i = 0;
-    for(JsonVariant v : value) 
-    {
-        command.relayData.valueList[i] = v.as<int>();
-        i++;
-    }
-    i = 0;
+    number = 0;
 
     commandList.push_back(command);
 
