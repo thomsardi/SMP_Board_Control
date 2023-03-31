@@ -142,6 +142,21 @@ void resetAll()
   }
 }
 
+void setAll()
+{
+  int pin;
+  for (size_t i = 1; i <= 12; i++)
+  {
+    pin = relayControl.write(i, HIGH);
+    sr.set(pin, HIGH);
+    delay(20);
+    sr.set(pin, LOW);
+    delay(20);
+    ledControl.write(i, HIGH, leds);
+    FastLED.show();
+  }
+}
+
 void WiFiGotIP(WiFiEvent_t event, WiFiEventInfo_t info){
   digitalWrite(internalLed, HIGH);
   Serial.print("Connected to ");
@@ -294,12 +309,18 @@ void loop() {
     // digitalWrite(internalLed, c.value);
   }
 
-  // relayTest1();
-  // delay(1000);
-  // relayTest2();
-  // delay(1000);
-  // relayTest3();
-  // delay(1000);
+  relayTest1();
+  delay(1000);
+  relayTest2();
+  delay(1000);
+  relayTest3();
+  delay(1000);
+  resetAll();
+  delay(1000);
+  setAll();
+  delay(1000);
+  resetAll();
+  delay(1000);
   // resetAll();
   // delay(1000);
   // sr.set(7, HIGH);
