@@ -14,8 +14,8 @@
 #include <RelayControl.h>
 #include <LedControl.h>
 
-const int numberOfShiftRegister = 4;
-const int numberOfLed = 12;
+const int numberOfShiftRegister = 8;
+const int numberOfLed = 24;
 const int din = 18; //data pin
 const int stcp = 19; //latch pin
 const int shcp = 21; //clock pin
@@ -49,7 +49,7 @@ LedControl ledControl;
 
 void relayTest1()
 {
-  for (size_t i = 1; i <= 12; i++)
+  for (size_t i = 1; i <= 24; i++)
   {
     int pin = relayControl.write(i, HIGH);
     sr.set(pin, HIGH);
@@ -74,7 +74,7 @@ void relayTest1()
 void relayTest2()
 {
   int pin;
-  for (size_t i = 1; i <= 12; i++)
+  for (size_t i = 1; i <= 24; i++)
   {
     if (i%2)
     {
@@ -102,7 +102,7 @@ void relayTest2()
 void relayTest3()
 {
   int pin;
-  for (size_t i = 1; i <= 12; i++)
+  for (size_t i = 1; i <= 24; i++)
   {
     if (i%2)
     {
@@ -130,7 +130,7 @@ void relayTest3()
 void resetAll()
 {
   int pin;
-  for (size_t i = 1; i <= 12; i++)
+  for (size_t i = 1; i <= 24; i++)
   {
     pin = relayControl.write(i, LOW);
     sr.set(pin, HIGH);
@@ -145,7 +145,7 @@ void resetAll()
 void setAll()
 {
   int pin;
-  for (size_t i = 1; i <= 12; i++)
+  for (size_t i = 1; i <= 24; i++)
   {
     pin = relayControl.write(i, HIGH);
     sr.set(pin, HIGH);
